@@ -4,6 +4,7 @@ plugins {
     id("java")
     kotlin("jvm") version "2.0.21"
     id("org.jetbrains.intellij.platform") version "2.1.0"
+    id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
 group = providers.gradleProperty("pluginGroup").get()
@@ -37,10 +38,10 @@ java {
 
 intellijPlatform {
     pluginConfiguration {
-        name.set(providers.gradleProperty("pluginName"))
+        name = providers.gradleProperty("pluginName")
         ideaVersion {
-            sinceBuild.set("233")
-            untilBuild.set("251.*")
+            sinceBuild = "233"
+            untilBuild = "251.*"
         }
     }
 
@@ -51,15 +52,22 @@ intellijPlatform {
     }
 }
 
+ktlint {
+    version.set("1.3.1")
+    android.set(false)
+    outputToConsole.set(true)
+    ignoreFailures.set(false)
+}
+
 tasks {
     wrapper {
         gradleVersion = "8.10.2"
     }
 
     patchPluginXml {
-        version.set(providers.gradleProperty("pluginVersion"))
-        sinceBuild.set("233")
-        untilBuild.set("251.*")
+        version = providers.gradleProperty("pluginVersion").get()
+        sinceBuild = "233"
+        untilBuild = "251.*"
     }
 
     withType<JavaCompile> {
@@ -71,5 +79,9 @@ tasks {
         compilerOptions {
             jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
         }
+    }
+
+    named("build") {
+        dependsOn("ktlintCheck")
     }
 }
