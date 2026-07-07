@@ -20,6 +20,8 @@ dependencies {
     intellijPlatform {
         pycharmCommunity(providers.gradleProperty("platformVersion"))
         testFramework(TestFrameworkType.Platform)
+        pluginVerifier()
+        zipSigner()
     }
 }
 
@@ -39,6 +41,12 @@ intellijPlatform {
         ideaVersion {
             sinceBuild.set("233")
             untilBuild.set("251.*")
+        }
+    }
+
+    pluginVerification {
+        ides {
+            recommended()
         }
     }
 }
