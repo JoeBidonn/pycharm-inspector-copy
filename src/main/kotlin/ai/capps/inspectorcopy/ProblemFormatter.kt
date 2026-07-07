@@ -69,7 +69,10 @@ internal object ProblemFormatter {
         }
     }
 
-    fun relativize(project: Project?, file: VirtualFile?): String {
+    fun relativize(
+        project: Project?,
+        file: VirtualFile?,
+    ): String {
         if (file == null) return "<unknown file>"
 
         val basePath = project?.basePath
