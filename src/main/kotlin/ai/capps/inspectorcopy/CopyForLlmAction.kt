@@ -1,12 +1,13 @@
 package ai.capps.inspectorcopy
 
-import com.intellij.ide.CopyPasteManager
 import com.intellij.openapi.actionSystem.ActionUpdateThread
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManager
+import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.ui.Messages
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.KeyboardFocusManager
@@ -36,7 +37,7 @@ class CopyForLlmAction : AnAction() {
         val fallbackFile =
             e.getData(CommonDataKeys.VIRTUAL_FILE)
                 ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
-                ?: project.guessProjectDir()
+                ?: ProjectUtil.guessProjectDir(project)
 
         val entries =
             collectFromTree(project, tree, fallbackFile)
