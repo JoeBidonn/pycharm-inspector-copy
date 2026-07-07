@@ -3,7 +3,7 @@ import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 plugins {
     id("java")
     kotlin("jvm") version "2.0.21"
-    id("org.jetbrains.intellij.platform") version "2.1.0"
+    id("org.jetbrains.intellij.platform") version "2.17.0"
     id("org.jlleitschuh.gradle.ktlint") version "12.1.1"
 }
 
@@ -40,7 +40,7 @@ intellijPlatform {
     pluginConfiguration {
         name = providers.gradleProperty("pluginName")
         ideaVersion {
-            sinceBuild = "233"
+            sinceBuild = "243"
             untilBuild = "251.*"
         }
     }
@@ -67,7 +67,7 @@ tasks {
 
     patchPluginXml {
         version = providers.gradleProperty("pluginVersion").get()
-        sinceBuild = "233"
+        sinceBuild = "243"
         untilBuild = "251.*"
     }
 
