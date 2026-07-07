@@ -24,6 +24,9 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
+      - name: Run ktlint
+        run: gradle ktlintCheck --stacktrace
+
       - name: Build plugin with system Gradle
         run: gradle buildPlugin --stacktrace
 
