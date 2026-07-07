@@ -15,7 +15,6 @@ import javax.swing.JTree
 import javax.swing.tree.TreePath
 
 class CopyForLlmAction : AnAction() {
-
     override fun getActionUpdateThread(): ActionUpdateThread = ActionUpdateThread.BGT
 
     override fun update(e: AnActionEvent) {
@@ -34,12 +33,14 @@ class CopyForLlmAction : AnAction() {
             return
         }
 
-        val fallbackFile = e.getData(CommonDataKeys.VIRTUAL_FILE)
-            ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
-            ?: project.guessProjectDir()
+        val fallbackFile =
+            e.getData(CommonDataKeys.VIRTUAL_FILE)
+                ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
+                ?: project.guessProjectDir()
 
-        val entries = collectFromTree(project, tree, fallbackFile)
-            .distinctBy { Triple(it.filePath, it.lineNumber, it.message) }
+        val entries =
+            collectFromTree(project, tree, fallbackFile)
+                .distinctBy { Triple(it.filePath, it.lineNumber, it.message) }
 
         if (entries.isEmpty()) {
             Messages.showInfoMessage(
@@ -59,8 +60,7 @@ class CopyForLlmAction : AnAction() {
         )
     }
 
-    private fun focusedTree(): JTree? =
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTree
+    private fun focusedTree(): JTree? = KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTree
 
     private fun collectFromTree(
         project: Project,
@@ -96,9 +96,10 @@ class CopyForLlmAction : AnAction() {
 
     private fun extractUserObject(node: Any): Any? =
         runCatching {
-            val method = node.javaClass.methods.firstOrNull {
-                it.name == "getUserObject" && it.parameterCount == 0
-            }
+            val method =
+                node.javaClass.methods.firstOrNull {
+                    it.name == "getUserObject" && it.parameterCount == 0
+                }
             method?.invoke(node)
         }.getOrNull()
 
@@ -120,34 +121,39 @@ class CopyForLlmAction : AnAction() {
     private fun extractVirtualFile(value: Any): VirtualFile? {
         if (value is VirtualFile) return value
         return runCatching {
-            val method = value.javaClass.methods.firstOrNull {
-                it.name == "getVirtualFile" && it.parameterCount == 0
-            }
+            val method =
+                value.javaClass.methods.firstOrNull {
+                    it.name == "getVirtualFile" && it.parameterCount == 0
+                }
             method?.invoke(value) as? VirtualFile
         }.getOrNull()
     }
 
     private fun extractPsiFileVirtualFile(value: Any): VirtualFile? =
         runCatching {
-            val psiFileMethod = value.javaClass.methods.firstOrNull {
-                it.name == "getPsiFile" && it.parameterCount == 0
-            }
+            val psiFileMethod =
+                value.javaClass.methods.firstOrNull {
+                    it.name == "getPsiFile" && it.parameterCount == 0
+                }
             val psiFile = psiFileMethod?.invoke(value) ?: return null
-            val vfMethod = psiFile.javaClass.methods.firstOrNull {
-                it.name == "getVirtualFile" && it.parameterCount == 0
-            }
+            val vfMethod =
+                psiFile.javaClass.methods.firstOrNull {
+                    it.name == "getVirtualFile" && it.parameterCount == 0
+                }
             vfMethod?.invoke(psiFile) as? VirtualFile
         }.getOrNull()
 
     private fun extractContainingFileVirtualFile(value: Any): VirtualFile? =
         runCatching {
-            val containingFileMethod = value.javaClass.methods.firstOrNull {
-                it.name == "getContainingFile" && it.parameterCount == 0
-            }
+            val containingFileMethod =
+                value.javaClass.methods.firstOrNull {
+                    it.name == "getContainingFile" && it.parameterCount == 0
+                }
             val containingFile = containingFileMethod?.invoke(value) ?: return null
-            val vfMethod = containingFile.javaClass.methods.firstOrNull {
-                it.name == "getVirtualFile" && it.parameterCount == 0
-            }
+            val vfMethod =
+                containingFile.javaClass.methods.firstOrNull {
+                    it.name == "getVirtualFile" && it.parameterCount == 0
+                }
             vfMethod?.invoke(containingFile) as? VirtualFile
         }.getOrNull()
 
@@ -155,18 +161,20 @@ class CopyForLlmAction : AnAction() {
         source: Any?,
         text: String,
     ): Int {
-        val reflectedLine = source?.let { obj ->
-            sequenceOf("getLine", "getLineNumber")
-                .mapNotNull { methodName ->
-                    runCatching {
-                        val method = obj.javaClass.methods.firstOrNull {
-                            it.name == methodName && it.parameterCount == 0
-                        }
-                        (method?.invoke(obj) as? Number)?.toInt()
-                    }.getOrNull()
-                }
-                .firstOrNull { it > 0 }
-        }
+        val reflectedLine =
+            source?.let { obj ->
+                sequenceOf("getLine", "getLineNumber")
+                    .mapNotNull { methodName ->
+                        runCatching {
+                            val method =
+                                obj.javaClass.methods.firstOrNull {
+                                    it.name == methodName && it.parameterCount == 0
+                                }
+                            (method?.invoke(obj) as? Number)?.toInt()
+                        }.getOrNull()
+                    }
+                    .firstOrNull { it > 0 }
+            }
         if (reflectedLine != null) return reflectedLine
 
         val regex = Regex("(?:^|[^0-9])(\\d{1,6})(?:[^0-9]|$)")
@@ -183,6 +191,5 @@ class CopyForLlmAction : AnAction() {
         }
     }
 
-    private fun inferMessage(text: String): String =
-        text.substringAfter(": ", text).trim()
+    private fun inferMessage(text: String): String = text.substringAfter(": ", text).trim()
 }
