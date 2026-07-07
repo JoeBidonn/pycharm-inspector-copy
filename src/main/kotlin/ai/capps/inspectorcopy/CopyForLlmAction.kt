@@ -62,12 +62,20 @@ class CopyForLlmAction : AnAction() {
     private fun focusedTree(): JTree? =
         KeyboardFocusManager.getCurrentKeyboardFocusManager().focusOwner as? JTree
 
-    private fun collectFromTree(project: Project, tree: JTree, fallbackFile: VirtualFile?): List<ProblemEntry> {
+    private fun collectFromTree(
+        project: Project,
+        tree: JTree,
+        fallbackFile: VirtualFile?,
+    ): List<ProblemEntry> {
         val selectionPaths = tree.selectionPaths?.toList().orEmpty()
         return selectionPaths.mapNotNull { collectEntry(project, it, fallbackFile) }
     }
 
-    private fun collectEntry(project: Project, path: TreePath, fallbackFile: VirtualFile?): ProblemEntry? {
+    private fun collectEntry(
+        project: Project,
+        path: TreePath,
+        fallbackFile: VirtualFile?,
+    ): ProblemEntry? {
         val node = path.lastPathComponent ?: return null
         val userObject = extractUserObject(node)
         val text = node.toString().trim().ifBlank { return null }
@@ -86,15 +94,21 @@ class CopyForLlmAction : AnAction() {
         )
     }
 
-    private fun extractUserObject(node: Any): Any? = runCatching {
-        val method = node.javaClass.methods.firstOrNull {
-            it.name == "getUserObject" && it.parameterCount == 0
-        }
-        method?.invoke(node)
-    }.getOrNull()
+    private fun extractUserObject(node: Any): Any? =
+        runCatching {
+            val method = node.javaClass.methods.firstOrNull {
+                it.name == "getUserObject" && it.parameterCount == 0
+            }
+            method?.invoke(node)
+        }.getOrNull()
 
-    private fun inferFile(project: Project, source: Any?): VirtualFile? {
-        if (source == null) return FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
+    private fun inferFile(
+        project: Project,
+        source: Any?,
+    ): VirtualFile? {
+        if (source == null) {
+            return FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
+        }
 
         extractVirtualFile(source)?.let { return it }
         extractPsiFileVirtualFile(source)?.let { return it }
@@ -113,29 +127,34 @@ class CopyForLlmAction : AnAction() {
         }.getOrNull()
     }
 
-    private fun extractPsiFileVirtualFile(value: Any): VirtualFile? = runCatching {
-        val psiFileMethod = value.javaClass.methods.firstOrNull {
-            it.name == "getPsiFile" && it.parameterCount == 0
-        }
-        val psiFile = psiFileMethod?.invoke(value) ?: return null
-        val vfMethod = psiFile.javaClass.methods.firstOrNull {
-            it.name == "getVirtualFile" && it.parameterCount == 0
-        }
-        vfMethod?.invoke(psiFile) as? VirtualFile
-    }.getOrNull()
+    private fun extractPsiFileVirtualFile(value: Any): VirtualFile? =
+        runCatching {
+            val psiFileMethod = value.javaClass.methods.firstOrNull {
+                it.name == "getPsiFile" && it.parameterCount == 0
+            }
+            val psiFile = psiFileMethod?.invoke(value) ?: return null
+            val vfMethod = psiFile.javaClass.methods.firstOrNull {
+                it.name == "getVirtualFile" && it.parameterCount == 0
+            }
+            vfMethod?.invoke(psiFile) as? VirtualFile
+        }.getOrNull()
 
-    private fun extractContainingFileVirtualFile(value: Any): VirtualFile? = runCatching {
-        val containingFileMethod = value.javaClass.methods.firstOrNull {
-            it.name == "getContainingFile" && it.parameterCount == 0
-        }
-        val containingFile = containingFileMethod?.invoke(value) ?: return null
-        val vfMethod = containingFile.javaClass.methods.firstOrNull {
-            it.name == "getVirtualFile" && it.parameterCount == 0
-        }
-        vfMethod?.invoke(containingFile) as? VirtualFile
-    }.getOrNull()
+    private fun extractContainingFileVirtualFile(value: Any): VirtualFile? =
+        runCatching {
+            val containingFileMethod = value.javaClass.methods.firstOrNull {
+                it.name == "getContainingFile" && it.parameterCount == 0
+            }
+            val containingFile = containingFileMethod?.invoke(value) ?: return null
+            val vfMethod = containingFile.javaClass.methods.firstOrNull {
+                it.name == "getVirtualFile" && it.parameterCount == 0
+            }
+            vfMethod?.invoke(containingFile) as? VirtualFile
+        }.getOrNull()
 
-    private fun inferLine(source: Any?, text: String): Int {
+    private fun inferLine(
+        source: Any?,
+        text: String,
+    ): Int {
         val reflectedLine = source?.let { obj ->
             sequenceOf("getLine", "getLineNumber")
                 .mapNotNull { methodName ->
