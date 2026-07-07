@@ -43,11 +43,12 @@ internal object ProblemFormatter {
     ): String {
         if (file == null) return "<source unavailable>"
 
-        val text = try {
-            String(file.contentsToByteArray(), file.charset)
-        } catch (_: Throwable) {
-            return "<source unavailable>"
-        }
+        val text =
+            try {
+                String(file.contentsToByteArray(), file.charset)
+            } catch (_: Throwable) {
+                return "<source unavailable>"
+            }
 
         val normalized = text.replace("\r\n", "\n")
         val lines = normalized.split("\n")
