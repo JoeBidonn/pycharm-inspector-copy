@@ -40,10 +40,12 @@ jobs:
           path: build/distributions/*.zip
           if-no-files-found: error
 
-      - name: Upload verification reports
+      - name: Upload test results and reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: plugin-verification-reports
-          path: build/reports/**
+          name: test-results-and-reports
+          path: |
+            build/reports/**
+            build/test-results/**
           if-no-files-found: ignore
