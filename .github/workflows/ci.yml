@@ -1,4 +1,4 @@
-name: CI
+name:CI
 
 on:
   push:
@@ -34,12 +34,11 @@ jobs:
         run: gradle verifyPlugin --stacktrace
 
       - name: Upload plugin distribution
-        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: plugin-distribution
-          path: build/distributions/*
-          if-no-files-found: ignore
+          path: build/distributions/*.zip
+          if-no-files-found: error
 
       - name: Upload verification reports
         if: always()
