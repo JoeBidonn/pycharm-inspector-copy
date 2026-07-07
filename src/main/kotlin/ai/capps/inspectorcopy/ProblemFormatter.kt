@@ -37,19 +37,20 @@ internal object ProblemFormatter {
     }
 
     fun buildSnippet(
-        project: Project?,
         file: VirtualFile?,
         lineNumber: Int,
         contextLines: Int = 5,
     ): String {
         if (file == null) return "<source unavailable>"
+
         val text = try {
             String(file.contentsToByteArray(), file.charset)
         } catch (_: Throwable) {
             return "<source unavailable>"
         }
 
-        val lines = text.split("\n")
+        val normalized = text.replace("\r\n", "\n")
+        val lines = normalized.split("\n")
         if (lines.isEmpty()) return "<source unavailable>"
 
         val targetIndex = (lineNumber - 1).coerceIn(0, lines.lastIndex)
@@ -70,12 +71,13 @@ internal object ProblemFormatter {
 
     fun relativize(project: Project?, file: VirtualFile?): String {
         if (file == null) return "<unknown file>"
+
         val basePath = project?.basePath
         val filePath = file.path
         return if (basePath != null && filePath.startsWith(basePath)) {
             filePath.removePrefix(basePath).trimStart('/', '\\')
         } else {
-            file.name
+            file.path
         }
     }
 }
