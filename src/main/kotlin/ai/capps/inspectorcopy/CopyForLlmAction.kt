@@ -7,8 +7,8 @@ import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.ide.CopyPasteManager
 import com.intellij.openapi.project.Project
-import com.intellij.openapi.project.ProjectUtil
 import com.intellij.openapi.ui.Messages
+import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import java.awt.KeyboardFocusManager
 import java.awt.datatransfer.StringSelection
@@ -37,7 +37,7 @@ class CopyForLlmAction : AnAction() {
         val fallbackFile =
             e.getData(CommonDataKeys.VIRTUAL_FILE)
                 ?: FileEditorManager.getInstance(project).selectedFiles.firstOrNull()
-                ?: ProjectUtil.guessProjectDir(project)
+                ?: project.basePath?.let { LocalFileSystem.getInstance().findFileByPath(it) }
 
         val entries =
             collectFromTree(project, tree, fallbackFile)
