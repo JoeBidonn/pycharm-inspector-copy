@@ -1,0 +1,24 @@
+<idea-plugin>
+    <id>ai.capps.inspectorcopy</id>
+    <name>Inspector Copy for LLM</name>
+    <vendor email="support@example.com">Capps AI</vendor>
+    <description><![CDATA[
+        Copies selected inspection problems from the Problems tool window or Inspection Results tree
+        into a structured Markdown block suitable for LLM chats.
+    ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <actions>
+        <action
+                id="ai.capps.inspectorcopy.CopyForLlmAction"
+                class="ai.capps.inspectorcopy.CopyForLlmAction"
+                text="Copy for LLM"
+                description="Copy selected inspection problems as Markdown for LLMs">
+            <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt shift C"/>
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="last"/>
+            <add-to-group group-id="ProblemsView.ToolWindow.TreePopup" anchor="last"/>
+            <add-to-group group-id="InspectionResultsView.Popup" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>
