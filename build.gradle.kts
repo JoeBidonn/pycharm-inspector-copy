@@ -47,7 +47,8 @@ intellijPlatform {
 
     pluginVerification {
         ides {
-            recommended()
+            // Explicitly target PyCharm Community to avoid Gradle 9.x configuration container issues with recommended()
+            ide(providers.gradleProperty("platformType").get(), providers.gradleProperty("platformVersion").get())
         }
     }
 }
