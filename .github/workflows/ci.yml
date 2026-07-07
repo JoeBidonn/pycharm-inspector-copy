@@ -24,17 +24,11 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Make Gradle wrapper executable
-        run: chmod +x ./gradlew
+      - name: Build plugin with system Gradle
+        run: gradle buildPlugin --stacktrace
 
-      - name: Validate Gradle wrapper
-        uses: gradle/wrapper-validation-action@v3
-
-      - name: Build plugin
-        run: ./gradlew buildPlugin --stacktrace
-
-      - name: Verify plugin
-        run: ./gradlew verifyPlugin --stacktrace
+      - name: Verify plugin with system Gradle
+        run: gradle verifyPlugin --stacktrace
 
       - name: Upload plugin distribution
         if: always()
