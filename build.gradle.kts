@@ -24,7 +24,6 @@ dependencies {
         pluginVerifier()
         zipSigner()
         instrumentationTools()
-        intellijDependencies() // Added to resolve :instrumentCode failure
     }
 }
 
@@ -39,6 +38,8 @@ java {
 }
 
 intellijPlatform {
+    instrumentCode = false // Disable instrumentation to bypass the Java Compiler dependency issue
+    
     pluginConfiguration {
         name = providers.gradleProperty("pluginName")
         ideaVersion {
