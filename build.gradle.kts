@@ -23,7 +23,8 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
         pluginVerifier()
         zipSigner()
-        instrumentationTools() // Added to fix :instrumentCode failure
+        instrumentationTools()
+        intellijDependencies() // Added to resolve :instrumentCode failure
     }
 }
 
