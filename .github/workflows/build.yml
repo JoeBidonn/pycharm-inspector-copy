@@ -6,6 +6,7 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
+  workflow_dispatch: # This allows you to run the workflow manually from the Actions tab
 
 jobs:
   build:
