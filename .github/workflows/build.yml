@@ -6,7 +6,7 @@ on:
     tags: [ 'v*' ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch: # This allows you to run the workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,9 +26,10 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.10.2'
+          cache-disabled: true # Disable cache to ensure fresh plugin application
 
       - name: Build Plugin
-        run: gradle buildPlugin
+        run: gradle buildPlugin --no-configuration-cache
         env:
           INTELLIJ_PLATFORM_GRADLE_PLUGIN_IGNORE_VERSION_CHECK: "true"
 
