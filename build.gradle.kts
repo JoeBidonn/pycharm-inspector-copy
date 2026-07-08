@@ -23,6 +23,7 @@ dependencies {
         testFramework(TestFrameworkType.Platform)
         pluginVerifier()
         zipSigner()
+        instrumentationTools() // Added to fix :instrumentCode failure
     }
 }
 
@@ -50,7 +51,7 @@ ktlint {
     version.set("1.3.1")
     android.set(false)
     outputToConsole.set(true)
-    ignoreFailures.set(true) // Do not fail the build on style/formatting issues
+    ignoreFailures.set(true)
 }
 
 tasks {
